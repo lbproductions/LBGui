@@ -22,7 +22,7 @@ public:
 
     void registerChildWidget(ChildWidget* childWidget);
 
-private:
+protected:
     Ui::MainWindow *ui;
 
     int m_childWidgetIndex;
