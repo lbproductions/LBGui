@@ -18,4 +18,18 @@ INCLUDEPATH     += $$QPERSISTENCE_INCLUDEPATH
 LIBS            += $$QPERSISTENCE_LIBS
 
 SOURCES += \
-    main.cpp
+    main.cpp \
+    controller.cpp \
+    data/customer.cpp
+
+
+macx: LIBS += -L$$OUT_PWD/../lib/LBGui/src/ -lLBGui
+
+INCLUDEPATH += $$PWD/../lib/LBGui/src
+DEPENDPATH += $$PWD/../lib/LBGui/src
+
+macx: PRE_TARGETDEPS += $$OUT_PWD/../lib/LBGui/src/libLBGui.a
+
+HEADERS += \
+    controller.h \
+    data/customer.h
