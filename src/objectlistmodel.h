@@ -2,6 +2,7 @@
 #define OBJECTLISTMODEL_H
 
 #include <QAbstractListModel>
+#include <QSharedPointer>
 
 namespace LBGui {
 
@@ -12,9 +13,9 @@ public:
     explicit ObjectListModelBase(QObject *parent = 0);
 
 protected slots:
-    virtual void objectInserted(QObject *object) = 0;
-    virtual void objectUpdated(QObject *object) = 0;
-    virtual void objectRemoved(QObject *object) = 0;
+    virtual void objectInserted(QSharedPointer<QObject> object) = 0;
+    virtual void objectUpdated(QSharedPointer<QObject> object) = 0;
+    virtual void objectRemoved(QSharedPointer<QObject> object) = 0;
 };
 
 template<class T>
@@ -24,18 +25,18 @@ public:
     explicit ObjectListModel(QObject *parent = 0);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
-    virtual int rowOf(QObject *object) const;
+    virtual int rowOf(QSharedPointer<QObject> object) const;
 
-    T *objectByIndex(const QModelIndex &index) const;
-    virtual QList<T *> objects() const = 0;
+    QSharedPointer<T> objectByIndex(const QModelIndex &index) const;
+    virtual QList<QSharedPointer<T> > objects() const = 0;
 
 protected:
-    void objectInserted(QObject *object) Q_DECL_OVERRIDE;
-    void objectUpdated(QObject *object) Q_DECL_OVERRIDE;
-    void objectRemoved(QObject *object) Q_DECL_OVERRIDE;
+    void objectInserted(QSharedPointer<QObject> object) Q_DECL_OVERRIDE;
+    void objectUpdated(QSharedPointer<QObject> object) Q_DECL_OVERRIDE;
+    void objectRemoved(QSharedPointer<QObject> object) Q_DECL_OVERRIDE;
 
 private:
-    QHash<T *, int> m_rows;
+    QHash<QSharedPointer<T>, int> m_rows;
     void adjustExistingRows();
 };
 
@@ -44,7 +45,7 @@ private:
 using namespace LBGui;
 
 template<class T>
-T *ObjectListModel<T>::objectByIndex(const QModelIndex &index) const
+QSharedPointer<T> ObjectListModel<T>::objectByIndex(const QModelIndex &index) const
 {
     if(index.row() >= objects().size())
         return nullptr;
@@ -68,29 +69,29 @@ int ObjectListModel<T>::rowCount(const QModelIndex &parent) const
 }
 
 template<class T>
-int ObjectListModel<T>::rowOf(QObject *object) const
+int ObjectListModel<T>::rowOf(QSharedPointer<QObject> object) const
 {
-    if(m_rows.contains(static_cast<T*>(object)))
-        return m_rows.value(static_cast<T*>(object));
+    if(m_rows.contains(qSharedPointerCast<T>(object)))
+        return m_rows.value(qSharedPointerCast<T>(object));
 
-    return objects().indexOf(static_cast<T*>(object));
+    return objects().indexOf(qSharedPointerCast<T>(object));
 }
 
 template<class T>
-void ObjectListModel<T>::objectInserted(QObject *object)
+void ObjectListModel<T>::objectInserted(QSharedPointer<QObject> object)
 {
     int row = rowOf(object);
     if(row < 0)
         return;
 
     beginInsertRows(QModelIndex(), row, row);
-    m_rows.insert(static_cast<T*>(object), row);
+    m_rows.insert(qSharedPointerCast<T>(object), row);
     adjustExistingRows();
     endInsertRows();
 }
 
 template<class T>
-void ObjectListModel<T>::objectUpdated(QObject *object)
+void ObjectListModel<T>::objectUpdated(QSharedPointer<QObject> object)
 {
     int row = rowOf(object);
     if(row < 0)
@@ -100,14 +101,14 @@ void ObjectListModel<T>::objectUpdated(QObject *object)
 }
 
 template<class T>
-void ObjectListModel<T>::objectRemoved(QObject *object)
+void ObjectListModel<T>::objectRemoved(QSharedPointer<QObject> object)
 {
     int row = rowOf(object);
     if(row < 0)
         return;
 
     beginRemoveRows(QModelIndex(), row, row);
-    m_rows.remove(static_cast<T*>(object));
+    m_rows.remove(qSharedPointerCast<T>(object));
     adjustExistingRows();
     endRemoveRows();
 }
@@ -116,7 +117,7 @@ template<class T>
 void ObjectListModel<T>::adjustExistingRows()
 {
     int i = 0;
-    foreach(T *object, objects()) {
+    foreach(QSharedPointer<T> object, objects()) {
         if(m_rows.contains(object))
             m_rows.insert(object, i);
         ++i;
