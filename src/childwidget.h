@@ -16,6 +16,8 @@ public:
 
     QIcon icon();
 
+    virtual QList<QWidget*> statusBarButtons() = 0;
+
 signals:
 
 public slots:

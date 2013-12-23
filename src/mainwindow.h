@@ -22,11 +22,17 @@ public:
 
     void registerChildWidget(ChildWidget* childWidget);
 
+protected slots:
+    void onButtonClicked(int index);
+
 protected:
     Ui::MainWindow *ui;
 
     int m_childWidgetIndex;
+    int m_currentChildWidgetIndex;
     QButtonGroup* m_buttonGroup;
+
+    QList<ChildWidget*> m_childWidets;
 
 };
 
