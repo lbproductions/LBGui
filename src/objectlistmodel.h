@@ -48,7 +48,7 @@ template<class T>
 QSharedPointer<T> ObjectListModel<T>::objectByIndex(const QModelIndex &index) const
 {
     if(index.row() >= objects().size())
-        return nullptr;
+        return QSharedPointer<T>();
 
     return objects().at(index.row());
 }
