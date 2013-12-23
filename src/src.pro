@@ -13,11 +13,15 @@ FORMS += \
 
 HEADERS += \
     mainwindow.h \
-    childwidget.h
+    childwidget.h \
+    noisygradientitemdelegate.h \
+    objectlistmodel.h
 
 SOURCES += \
     mainwindow.cpp \
-    childwidget.cpp
+    childwidget.cpp \
+    noisygradientitemdelegate.cpp \
+    objectlistmodel.cpp
 
 RESOURCES += \
     ../resources/uiresources.qrc
