@@ -64,6 +64,7 @@ void MainWindow::onButtonClicked(int index)
     ChildWidget* currentChild = m_childWidets.at(index);
     if(currentChild) {
         foreach(QWidget* widget, oldChild->statusBarButtons()) {
+            widget->show();
             ui->statusbar->addPermanentWidget(widget);
         }
     }
