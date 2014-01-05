@@ -56,6 +56,7 @@ void MainWindow::onButtonClicked(int index)
     ChildWidget* oldChild = m_childWidets.at(m_currentChildWidgetIndex);
     if(oldChild) {
         foreach(QWidget* widget, oldChild->statusBarButtons()) {
+            widget->hide();
             ui->statusbar->removeWidget(widget);
         }
     }
