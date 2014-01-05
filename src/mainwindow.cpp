@@ -56,6 +56,7 @@ void MainWindow::onButtonClicked(int index)
     ChildWidget* oldChild = m_childWidets.at(m_currentChildWidgetIndex);
     if(oldChild) {
         foreach(QWidget* widget, oldChild->statusBarButtons()) {
+            widget->setVisible(false);
             ui->statusbar->removeWidget(widget);
         }
     }
@@ -64,7 +65,7 @@ void MainWindow::onButtonClicked(int index)
     ChildWidget* currentChild = m_childWidets.at(index);
     if(currentChild) {
         foreach(QWidget* widget, oldChild->statusBarButtons()) {
-            widget->show();
+            widget->setVisible(true);
             ui->statusbar->addPermanentWidget(widget);
         }
     }
