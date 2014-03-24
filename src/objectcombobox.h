@@ -112,14 +112,4 @@ void ObjectComboBox<T>::clear()
     QComboBox::clear();
 }
 
-class Game;
-class Player;
-class Place;
-class Round;
-
-typedef ObjectComboBox<Game> GameComboBox;
-typedef ObjectComboBox<Player> PlayerComboBox;
-typedef ObjectComboBox<Place> PlaceComboBox;
-typedef ObjectComboBox<Round> RoundComboBox;
-
 #endif // OBJECTCOMBOBOX_H
