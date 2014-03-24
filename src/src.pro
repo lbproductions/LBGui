@@ -15,13 +15,15 @@ HEADERS += \
     mainwindow.h \
     childwidget.h \
     noisygradientitemdelegate.h \
-    objectlistmodel.h
+    objectlistmodel.h \
+    objectcombobox.h
 
 SOURCES += \
     mainwindow.cpp \
     childwidget.cpp \
     noisygradientitemdelegate.cpp \
-    objectlistmodel.cpp
+    objectlistmodel.cpp \
+    objectcombobox.cpp
 
 RESOURCES += \
     ../resources/uiresources.qrc
