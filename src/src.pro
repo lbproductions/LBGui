@@ -16,14 +16,16 @@ HEADERS += \
     childwidget.h \
     noisygradientitemdelegate.h \
     objectlistmodel.h \
-    objectcombobox.h
+    objectcombobox.h \
+    dialogcontroller.h
 
 SOURCES += \
     mainwindow.cpp \
     childwidget.cpp \
     noisygradientitemdelegate.cpp \
     objectlistmodel.cpp \
-    objectcombobox.cpp
+    objectcombobox.cpp \
+    dialogcontroller.cpp
 
 RESOURCES += \
     ../resources/uiresources.qrc
