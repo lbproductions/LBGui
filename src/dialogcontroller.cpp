@@ -11,7 +11,8 @@ DialogController::DialogController(QWidget *parent) :
     m_widget(nullptr),
     m_dialogHeight(400),
     m_dialogOffsetTop(0),
-    m_dialogOffsetLeft(29)
+    m_dialogOffsetLeft(29),
+    m_mode(TopLeft)
 {
 }
 
@@ -43,6 +44,11 @@ int DialogController::dialogOffsetLeft() const
 void DialogController::setDialogOffsetLeft(int dialogOffsetLeft)
 {
     m_dialogOffsetLeft = dialogOffsetLeft;
+}
+
+void DialogController::setAnchorMode(DialogController::AnchorMode mode)
+{
+    m_mode = mode;
 }
 
 void DialogController::closeDialogOnMousePress(const QPoint &mousePos)
@@ -115,6 +121,26 @@ void DialogController::closeDialog()
 
     emit dialogClosed();
 }
+int DialogController::dialogOffsetRight() const
+{
+    return m_dialogOffsetRight;
+}
+
+void DialogController::setDialogOffsetRight(int dialogOffsetRight)
+{
+    m_dialogOffsetRight = dialogOffsetRight;
+}
+
+int DialogController::dialogOffsetBottom() const
+{
+    return m_dialogOffsetBottom;
+}
+
+void DialogController::setDialogOffsetBottom(int dialogOffsetBottom)
+{
+    m_dialogOffsetBottom = dialogOffsetBottom;
+}
+
 
 void DialogController::closeDialogWhenDestroyed()
 {
@@ -139,9 +165,17 @@ QWidget *DialogController::frameWidget(QWidget *widget)
 
 QRect DialogController::visibleGeometry(QWidget *widget) const
 {
-    QPoint topLeft = widget->mapFromGlobal(m_parent->geometry().topLeft())
-            + QPoint(m_dialogOffsetLeft, m_dialogOffsetTop);
-    return QRect(topLeft, widget->size());
+    if(m_mode == TopLeft) {
+        QPoint topLeft = widget->mapFromGlobal(m_parent->geometry().topLeft())
+                + QPoint(m_dialogOffsetLeft, m_dialogOffsetTop);
+        return QRect(topLeft, widget->size());
+    }
+    else if(m_mode == BottomLeft) {
+        QPoint bottomLeft = widget->mapFromGlobal(m_parent->geometry().bottomLeft())
+                + QPoint(m_dialogOffsetLeft, -m_dialogOffsetBottom);
+        return QRect(bottomLeft - QPoint(0, m_parent->height()), widget->size());
+    }
+
 }
 
 QRect DialogController::hiddenGeometry(QWidget *widget) const

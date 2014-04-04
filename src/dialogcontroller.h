@@ -7,42 +7,58 @@ class GameWindow;
 
 class DialogController : public QObject
 {
-    Q_OBJECT
-public:
-    explicit DialogController(QWidget *parent = 0);
+        Q_OBJECT
+    public:
+        enum AnchorMode {
+            TopLeft,
+            BottomLeft
+        };
+        explicit DialogController(QWidget *parent = 0);
 
-    int dialogHeight() const;
-    void setDialogHeight(int dialogHeight);
+        int dialogHeight() const;
+        void setDialogHeight(int dialogHeight);
 
-    int dialogOffsetTop() const;
-    void setDialogOffsetTop(int dialogOffsetTop);
+        int dialogOffsetTop() const;
+        void setDialogOffsetTop(int dialogOffsetTop);
 
-    void showDialog(QWidget *widget);
-    void closeDialogOnMousePress(const QPoint &mousePos);
+        void showDialog(QWidget *widget);
+        void closeDialogOnMousePress(const QPoint &mousePos);
 
-    int dialogOffsetLeft() const;
-    void setDialogOffsetLeft(int dialogOffsetLeft);
+        int dialogOffsetLeft() const;
+        void setDialogOffsetLeft(int dialogOffsetLeft);
 
-signals:
-    void dialogClosed();
+        void setAnchorMode(AnchorMode mode);
 
-public slots:
-    void closeDialog();
+        int dialogOffsetBottom() const;
+        void setDialogOffsetBottom(int dialogOffsetBottom);
 
-private:
-    QWidget *m_parent;
-    QWidget *m_dialog;
-    QWidget *m_widget;
+        int dialogOffsetRight() const;
+        void setDialogOffsetRight(int dialogOffsetRight);
 
-    int m_dialogHeight;
-    int m_dialogOffsetTop;
-    int m_dialogOffsetLeft;
+    signals:
+        void dialogClosed();
 
-    void closeDialogWhenDestroyed();
+    public slots:
+        void closeDialog();
 
-    QWidget *frameWidget(QWidget *widget);
-    QRect visibleGeometry(QWidget *widget) const;
-    QRect hiddenGeometry(QWidget *widget) const;
+    private:
+        QWidget *m_parent;
+        QWidget *m_dialog;
+        QWidget *m_widget;
+
+        int m_dialogHeight;
+        int m_dialogOffsetTop;
+        int m_dialogOffsetLeft;
+        int m_dialogOffsetBottom;
+        int m_dialogOffsetRight;
+
+        void closeDialogWhenDestroyed();
+
+        QWidget *frameWidget(QWidget *widget);
+        QRect visibleGeometry(QWidget *widget) const;
+        QRect hiddenGeometry(QWidget *widget) const;
+
+        AnchorMode m_mode;
 };
 
 #endif // DIALOGCONTROLLER_H
