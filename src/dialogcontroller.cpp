@@ -9,10 +9,11 @@ DialogController::DialogController(QWidget *parent) :
     m_parent(parent),
     m_dialog(nullptr),
     m_widget(nullptr),
-    m_dialogHeight(400),
+    m_dialogHeight(-1),
+    m_dialogWidth(-1),
     m_dialogOffsetTop(0),
     m_dialogOffsetLeft(29),
-    m_mode(TopLeft)
+    m_mode(Bottom)
 {
 }
 
@@ -46,7 +47,7 @@ void DialogController::setDialogOffsetLeft(int dialogOffsetLeft)
     m_dialogOffsetLeft = dialogOffsetLeft;
 }
 
-void DialogController::setAnchorMode(DialogController::AnchorMode mode)
+void DialogController::setSlideInMode(DialogController::SlideInMode mode)
 {
     m_mode = mode;
 }
@@ -65,7 +66,13 @@ void DialogController::closeDialogOnMousePress(const QPoint &mousePos)
 void DialogController::showDialog(QWidget *widget)
 {
     QWidget *frame = frameWidget(widget);
-    frame->setFixedHeight(m_dialogHeight);
+    if(m_dialogHeight > 0) {
+        frame->setFixedHeight(m_dialogHeight);
+    }
+    if(m_dialogWidth > 0) {
+        frame->setFixedWidth(m_dialogWidth);
+    }
+    frame->setFocus();
     frame->show();
     connect(widget, &QWidget::destroyed, this, &DialogController::closeDialogWhenDestroyed);
 
@@ -107,8 +114,8 @@ void DialogController::closeDialog()
     QRect geom = dialog->geometry();
     int w = geom.width() + m_dialogOffsetLeft;
     QPropertyAnimation *animation  = new QPropertyAnimation(dialog, "geometry");
-    animation->setStartValue(geom);
-    animation->setEndValue(geom.adjusted(-w,0,-w,0));
+    animation->setStartValue(visibleGeometry(dialog));
+    animation->setEndValue(hiddenGeometry(dialog));
     animation->setDuration(300);
     animation->setEasingCurve(QEasingCurve::OutExpo);
     animation->start();
@@ -121,6 +128,16 @@ void DialogController::closeDialog()
 
     emit dialogClosed();
 }
+int DialogController::dialogWidth() const
+{
+    return m_dialogWidth;
+}
+
+void DialogController::setDialogWidth(int dialogWidth)
+{
+    m_dialogWidth = dialogWidth;
+}
+
 int DialogController::dialogOffsetRight() const
 {
     return m_dialogOffsetRight;
@@ -159,28 +176,26 @@ QWidget *DialogController::frameWidget(QWidget *widget)
     frame->setMinimumWidth(widget->width());
     frame->layout()->addWidget(widget);
     frame->layout()->setContentsMargins(0,0,0,0);
-    frame->setStyleSheet("QFrame#actionFrame { background: rgb(35,35,35); border:none; border-right:2px solid rgb(108,108,108);}");
+    if(m_mode == Bottom) {
+        frame->setStyleSheet("QFrame#actionFrame { background: rgb(35,35,35); border:none; border-top:2px solid rgb(108,108,108);}");
+    }
     return frame;
 }
 
 QRect DialogController::visibleGeometry(QWidget *widget) const
 {
-    if(m_mode == TopLeft) {
-        QPoint topLeft = widget->mapFromGlobal(m_parent->geometry().topLeft())
-                + QPoint(m_dialogOffsetLeft, m_dialogOffsetTop);
-        return QRect(topLeft, widget->size());
-    }
-    else if(m_mode == BottomLeft) {
-        QPoint bottomLeft = widget->mapFromGlobal(m_parent->geometry().bottomLeft())
-                + QPoint(m_dialogOffsetLeft, -m_dialogOffsetBottom);
-        return QRect(bottomLeft - QPoint(0, m_parent->height()), widget->size());
+    if(m_mode == Bottom) {
+        return QRect(0, m_parent->height() - widget->height(), m_parent->width(), widget->height());
     }
 
+    return QRect(0,0,0,0);
 }
 
 QRect DialogController::hiddenGeometry(QWidget *widget) const
 {
-    int w = widget->width() + m_dialogOffsetLeft;
-    QRect geom = visibleGeometry(widget);
-    return geom.adjusted(-w,0,-w,0);
+    if(m_mode == Bottom) {
+        return QRect(0, m_parent->height(), m_parent->width(), widget->height());
+    }
+
+    return QRect(0,0,0,0);
 }
